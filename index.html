@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arquitecturas de Clústeres y Continuidad del Negocio</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --accent: #e74c3c;
+            --light: #ecf0f1;
+            --dark: #2c3e50;
+            --success: #27ae60;
+            --warning: #f39c12;
+            --gradient: linear-gradient(135deg, #3498db, #2c3e50);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f9f9f9;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+        
+        /* Header Styles */
+        header {
+            background: var(--gradient);
+            color: white;
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo i {
+            margin-right: 10px;
+            color: var(--light);
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+        
+        nav ul li {
+            margin-left: 1.5rem;
+        }
+        
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        
+        nav ul li a:hover {
+            color: var(--light);
+        }
+        
+        /* Hero Section */
+        .hero {
+            background: var(--gradient);
+            color: white;
+            padding: 5rem 0;
+            text-align: center;
+        }
+        
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 800px;
+            margin: 0 auto 2rem;
+        }
+        
+        .btn {
+            display: inline-block;
+            background: var(--accent);
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .btn:hover {
+            background: #c0392b;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Section Styles */
+        section {
+            padding: 5rem 0;
+        }
+        
+        section:nth-child(even) {
+            background-color: var(--light);
+        }
+        
+        .section-title {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        
+        .section-title h2 {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .section-title h2::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: var(--secondary);
+            border-radius: 2px;
+        }
+        
+        .section-title p {
+            max-width: 700px;
+            margin: 0 auto;
+            color: #666;
+        }
+        
+        /* Cards */
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+        }
+        
+        .card:hover {
+            transform: translateY(-10px);
+        }
+        
+        .card-header {
+            background: var(--secondary);
+            color: white;
+            padding: 1.5rem;
+            text-align: center;
+        }
+        
+        .card-header i {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .card-body {
+            padding: 1.5rem;
+        }
+        
+        .card-body h3 {
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+        
+        /* Features */
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+        
+        .feature {
+            text-align: center;
+            padding: 2rem 1rem;
+        }
+        
+        .feature i {
+            font-size: 3rem;
+            color: var(--secondary);
+            margin-bottom: 1.5rem;
+        }
+        
+        .feature h3 {
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+        
+        /* Comparison */
+        .comparison {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        
+        .pros-cons {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .pros {
+            background: var(--success);
+            color: white;
+            padding: 1.5rem;
+        }
+        
+        .cons {
+            background: var(--accent);
+            color: white;
+            padding: 1.5rem;
+        }
+        
+        .pros h3, .cons h3 {
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .pros h3 i, .cons h3 i {
+            margin-right: 10px;
+        }
+        
+        .pros ul, .cons ul {
+            list-style: none;
+        }
+        
+        .pros ul li, .cons ul li {
+            margin-bottom: 0.5rem;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+        
+        .pros ul li::before, .cons ul li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            font-weight: bold;
+        }
+        
+        .cons ul li::before {
+            content: '✗';
+        }
+        
+        /* Timeline */
+        .timeline {
+            position: relative;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .timeline::after {
+            content: '';
+            position: absolute;
+            width: 6px;
+            background-color: var(--secondary);
+            top: 0;
+            bottom: 0;
+            left: 50%;
+            margin-left: -3px;
+        }
+        
+        .timeline-item {
+            padding: 10px 40px;
+            position: relative;
+            width: 50%;
+            box-sizing: border-box;
+        }
+        
+        .timeline-item:nth-child(odd) {
+            left: 0;
+        }
+        
+        .timeline-item:nth-child(even) {
+            left: 50%;
+        }
+        
+        .timeline-content {
+            padding: 20px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .timeline-content h3 {
+            margin-bottom: 10px;
+            color: var(--primary);
+        }
+        
+        .timeline-item::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background-color: white;
+            border: 4px solid var(--secondary);
+            border-radius: 50%;
+            top: 15px;
+            z-index: 1;
+        }
+        
+        .timeline-item:nth-child(odd)::after {
+            right: -10px;
+        }
+        
+        .timeline-item:nth-child(even)::after {
+            left: -10px;
+        }
+        
+        /* Footer */
+        footer {
+            background: var(--dark);
+            color: white;
+            padding: 3rem 0 1rem;
+        }
+        
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .footer-section h3 {
+            margin-bottom: 1.5rem;
+            position: relative;
+            padding-bottom: 10px;
+        }
+        
+        .footer-section h3::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 50px;
+            height: 2px;
+            background: var(--secondary);
+        }
+        
+        .footer-section p {
+            margin-bottom: 1rem;
+        }
+        
+        .footer-section ul {
+            list-style: none;
+        }
+        
+        .footer-section ul li {
+            margin-bottom: 0.5rem;
+        }
+        
+        .footer-section ul li a {
+            color: #ddd;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .footer-section ul li a:hover {
+            color: var(--secondary);
+        }
+        
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+            }
+            
+            nav ul {
+                margin-top: 1rem;
+            }
+            
+            nav ul li {
+                margin: 0 0.5rem;
+            }
+            
+            .hero h1 {
+                font-size: 2.2rem;
+            }
+            
+            .timeline::after {
+                left: 31px;
+            }
+            
+            .timeline-item {
+                width: 100%;
+                padding-left: 70px;
+                padding-right: 25px;
+            }
+            
+            .timeline-item:nth-child(even) {
+                left: 0;
+            }
+            
+            .timeline-item::after {
+                left: 21px;
+            }
+            
+            .timeline-item:nth-child(odd)::after, 
+            .timeline-item:nth-child(even)::after {
+                left: 21px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-server"></i>
+                    <span>ClusterTech</span>
+                </div>
+                <nav>
+                    <ul>
+                        <li><a href="#clusters">Clústeres</a></li>
+                        <li><a href="#continuidad">Continuidad</a></li>
+                        <li><a href="#rpo-rto">RPO y RTO</a></li>
+                        <li><a href="#herramientas">Herramientas</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1>Arquitecturas de Clústeres y Continuidad del Negocio</h1>
+            <p>Descubre cómo las arquitecturas de clústeres pueden mejorar la disponibilidad, escalabilidad y resiliencia de tus sistemas, y cómo implementar estrategias efectivas de continuidad del negocio.</p>
+            <a href="#clusters" class="btn">Explorar Conceptos</a>
+        </div>
+    </section>
+
+    <!-- Clusters Section -->
+    <section id="clusters">
+        <div class="container">
+            <div class="section-title">
+                <h2>Arquitecturas de Clústeres</h2>
+                <p>Los clústeres son grupos de servidores interconectados que trabajan juntos para mejorar el rendimiento, la disponibilidad y la escalabilidad de las aplicaciones.</p>
+            </div>
+            
+            <div class="cards">
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fas fa-network-wired"></i>
+                        <h3>¿Qué es un Clúster?</h3>
+                    </div>
+                    <div class="card-body">
+                        <p>Un clúster es un conjunto de computadoras independientes que trabajan juntas como un sistema único e integrado. Los nodos del clúster están conectados mediante una red de alta velocidad y ejecutan software especializado para coordinar sus actividades.</p>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fas fa-sitemap"></i>
+                        <h3>Tipos de Clústeres</h3>
+                    </div>
+                    <div class="card-body">
+                        <ul>
+                            <li><strong>Alta Disponibilidad (HA):</strong> Diseñados para garantizar la continuidad del servicio mediante la redundancia.</li>
+                            <li><strong>Balanceo de Carga:</strong> Distribuyen la carga de trabajo entre múltiples nodos para mejorar el rendimiento.</li>
+                            <li><strong>Alto Rendimiento (HPC):</strong> Utilizados para tareas computacionalmente intensivas mediante procesamiento paralelo.</li>
+                            <li><strong>Grid Computing:</strong> Conectan recursos distribuidos geográficamente para resolver problemas complejos.</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fas fa-microchip"></i>
+                        <h3>Tipos de Procesamiento</h3>
+                    </div>
+                    <div class="card-body">
+                        <ul>
+                            <li><strong>Procesamiento Paralelo:</strong> Divide una tarea en subtareas que se ejecutan simultáneamente en diferentes nodos.</li>
+                            <li><strong>Procesamiento Distribuido:</strong> Asigna diferentes tareas a diferentes nodos según su disponibilidad y capacidad.</li>
+                            <li><strong>Procesamiento en Tándem:</strong> Un nodo principal procesa mientras otros están en espera para tomar el control en caso de fallo.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Ventajas y Desventajas -->
+    <section id="ventajas">
+        <div class="container">
+            <div class="section-title">
+                <h2>Ventajas y Desventajas</h2>
+                <p>Como cualquier arquitectura, los clústeres presentan beneficios y desafíos que deben considerarse en la planificación.</p>
+            </div>
+            
+            <div class="comparison">
+                <div class="pros-cons">
+                    <div class="pros">
+                        <h3><i class="fas fa-check-circle"></i> Ventajas</h3>
+                        <ul>
+                            <li>Alta disponibilidad y tolerancia a fallos</li>
+                            <li>Escalabilidad horizontal mejorada</li>
+                            <li>Mejor relación rendimiento/costo</li>
+                            <li>Flexibilidad en la gestión de recursos</li>
+                            <li>Capacidad de procesamiento en paralelo</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="pros-cons">
+                    <div class="cons">
+                        <h3><i class="fas fa-times-circle"></i> Desventajas</h3>
+                        <ul>
+                            <li>Complejidad en la configuración y administración</li>
+                            <li>Mayor costo inicial en infraestructura</li>
+                            <li>Dependencia de software especializado</li>
+                            <li>Posibles cuellos de botella en la red</li>
+                            <li>Retos en la sincronización de datos</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Continuidad del Negocio -->
+    <section id="continuidad">
+        <div class="container">
+            <div class="section-title">
+                <h2>Continuidad del Negocio</h2>
+                <p>Estrategias y planes para garantizar que las operaciones críticas del negocio continúen durante y después de un desastre.</p>
+            </div>
+            
+            <div class="features">
+                <div class="feature">
+                    <i class="fas fa-chart-line"></i>
+                    <h3>Análisis de Riesgo</h3>
+                    <p>Identificación y evaluación de amenazas potenciales que podrían afectar las operaciones del negocio.</p>
+                </div>
+                
+                <div class="feature">
+                    <i class="fas fa-bullseye"></i>
+                    <h3>Análisis de Impacto</h3>
+                    <p>Evaluación de las consecuencias de una interrupción en las funciones críticas del negocio.</p>
+                </div>
+                
+                <div class="feature">
+                    <i class="fas fa-sort-amount-up"></i>
+                    <h3>Gestión de Prioridad</h3>
+                    <p>Clasificación de procesos y sistemas según su criticidad para el negocio.</p>
+                </div>
+                
+                <div class="feature">
+                    <i class="fas fa-redo"></i>
+                    <h3>Recuperación de Desastres</h3>
+                    <p>Procedimientos para restaurar sistemas y datos después de una interrupción significativa.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- RPO y RTO -->
+    <section id="rpo-rto">
+        <div class="container">
+            <div class="section-title">
+                <h2>RPO y RTO</h2>
+                <p>Métricas críticas para la planificación de la continuidad del negocio y recuperación de desastres.</p>
+            </div>
+            
+            <div class="cards">
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fas fa-history"></i>
+                        <h3>RPO (Recovery Point Objective)</h3>
+                    </div>
+                    <div class="card-body">
+                        <p>El RPO define la cantidad máxima de pérdida de datos aceptable medida en tiempo. Determina la frecuencia con la que deben realizarse las copias de seguridad.</p>
+                        <p><strong>Ejemplo:</strong> Un RPO de 4 horas significa que en caso de desastre, se pueden perder como máximo 4 horas de datos.</p>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fas fa-clock"></i>
+                        <h3>RTO (Recovery Time Objective)</h3>
+                    </div>
+                    <div class="card-body">
+                        <p>El RTO define el tiempo máximo aceptable para restaurar un servicio después de una interrupción. Determina la rapidez con la que deben recuperarse los sistemas.</p>
+                        <p><strong>Ejemplo:</strong> Un RTO de 2 horas significa que el sistema debe estar operativo nuevamente dentro de las 2 horas posteriores al incidente.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Herramientas y Tecnologías -->
+    <section id="herramientas">
+        <div class="container">
+            <div class="section-title">
+                <h2>Herramientas y Tecnologías</h2>
+                <p>Plataformas y soluciones utilizadas en la implementación de arquitecturas de clústeres.</p>
+            </div>
+            
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <h3>Kubernetes</h3>
+                        <p>Sistema de orquestación de contenedores que automatiza la implementación, escalado y gestión de aplicaciones en clústeres.</p>
+                    </div>
+                </div>
+                
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <h3>Docker Swarm</h3>
+                        <p>Herramienta de orquestación nativa de Docker para gestionar clústeres de contenedores.</p>
+                    </div>
+                </div>
+                
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <h3>Apache Hadoop</h3>
+                        <p>Framework de software para el procesamiento distribuido de grandes conjuntos de datos en clústeres.</p>
+                    </div>
+                </div>
+                
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <h3>VMware vSphere</h3>
+                        <p>Plataforma de virtualización para crear y gestionar infraestructuras de clústeres virtualizados.</p>
+                    </div>
+                </div>
+                
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <h3>Microsoft Failover Clustering</h3>
+                        <p>Solución de Microsoft para crear clústeres de alta disponibilidad en entornos Windows Server.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>ClusterTech</h3>
+                    <p>Especialistas en arquitecturas de clústeres y estrategias de continuidad del negocio.</p>
+                    <p>Ofrecemos consultoría, implementación y soporte para infraestructuras críticas.</p>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>Enlaces Rápidos</h3>
+                    <ul>
+                        <li><a href="#clusters">Arquitecturas de Clústeres</a></li>
+                        <li><a href="#continuidad">Continuidad del Negocio</a></li>
+                        <li><a href="#rpo-rto">RPO y RTO</a></li>
+                        <li><a href="#herramientas">Herramientas y Tecnologías</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>Contacto</h3>
+                    <p><i class="fas fa-map-marker-alt"></i> Av. Tecnología 123, Ciudad Digital</p>
+                    <p><i class="fas fa-phone"></i> +1 234 567 890</p>
+                    <p><i class="fas fa-envelope"></i> info@clustertech.com</p>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2023 ClusterTech. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+        
+        // Add animation to cards on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+        
+        // Observe cards and features
+        document.querySelectorAll('.card, .feature').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(20px)';
+            el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html>
